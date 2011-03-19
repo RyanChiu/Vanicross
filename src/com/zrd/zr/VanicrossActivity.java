@@ -94,12 +94,12 @@ public class VanicrossActivity extends Activity {
 				
 				ArrayList<Integer> vanBlks = getVanBlocks(blks);
 				
-				/*//for debug
+				//for debug
 				Toast.makeText(VanicrossActivity.this,
 					"left:" + blks[0] + ", top:" + blks[1] + ", right:" + blks[2] + ", bottom:" + blks[3],
 					Toast.LENGTH_SHORT
 				).show();
-				*/
+				
 				
 				if (vanBlks.size() == 0) {//no blocks should be vanished
 					Toast.makeText(VanicrossActivity.this,
@@ -181,7 +181,7 @@ public class VanicrossActivity extends Activity {
     	ArrayList<Integer> lst = ((ImageAdapter) mGridCross.getAdapter()).getThumbIds();
     	ArrayList<Integer> lstBlks = new ArrayList<Integer>();
 		for (int i = 0; i < blks.length; i++) {
-			if (blks[i] > 0) lstBlks.add(blks[i]);
+			if (blks[i] >= 0) lstBlks.add(blks[i]);
 		}
 		ArrayList<Integer> lstColors = new ArrayList<Integer>();
 		for (int i = 0; i < lstBlks.size(); i++) {
