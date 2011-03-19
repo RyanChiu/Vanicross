@@ -12,14 +12,15 @@ import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter {
 	private Context mContext;
-	public final static int mBlockWidth = 36;
+	public final static int mBlockWidth = 48;
 	public final static int mBlockPadding = 2;
 	private ArrayList<Integer> mThumbIds = new ArrayList<Integer>();
 	
 	public ImageAdapter (Context c) {
 		this.mContext = c;
 		Integer iColors[] = {
-			R.drawable.block_gray, R.drawable.block_brown, R.drawable.block_green, R.drawable.block_purple,
+			R.drawable.block_darkgreen, R.drawable.block_lightgreen, R.drawable.block_orange, R.drawable.block_dark,
+			R.drawable.block_purple, R.drawable.block_red, R.drawable.block_skyblue, R.drawable.block_yellow,
 			R.drawable.pineapple, R.drawable.pineapple
 		};
 		int iTotal = VanicrossActivity.getNumColumns() * VanicrossActivity.getNumRows();

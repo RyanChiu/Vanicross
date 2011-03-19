@@ -4,5 +4,5 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <GridView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/gridViewCross" android:gravity="center"></GridView>
+    <GridView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/gridViewCross" android:gravity="center" android:background="#33ffffff"></GridView>
 </LinearLayout>
