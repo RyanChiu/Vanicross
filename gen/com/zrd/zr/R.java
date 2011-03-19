@@ -11,17 +11,18 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int block_dark=0x7f020000;
-        public static final int block_darkgreen=0x7f020001;
-        public static final int block_lightgreen=0x7f020002;
-        public static final int block_orange=0x7f020003;
-        public static final int block_purple=0x7f020004;
-        public static final int block_red=0x7f020005;
-        public static final int block_skyblue=0x7f020006;
-        public static final int block_yellow=0x7f020007;
-        public static final int icon=0x7f020008;
-        public static final int pineapple=0x7f020009;
-        public static final int vanicross=0x7f02000a;
+        public static final int bg_gray=0x7f020000;
+        public static final int block_dark=0x7f020001;
+        public static final int block_darkgreen=0x7f020002;
+        public static final int block_lightgreen=0x7f020003;
+        public static final int block_orange=0x7f020004;
+        public static final int block_purple=0x7f020005;
+        public static final int block_red=0x7f020006;
+        public static final int block_skyblue=0x7f020007;
+        public static final int block_yellow=0x7f020008;
+        public static final int icon=0x7f020009;
+        public static final int pineapple=0x7f02000a;
+        public static final int vanicross=0x7f02000b;
     }
     public static final class id {
         public static final int gridViewCross=0x7f050000;

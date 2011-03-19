@@ -3,6 +3,6 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-    <GridView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/gridViewCross" android:gravity="center" android:background="#33ffffff"></GridView>
+    android:background="@drawable/bg_gray">
+    <GridView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/gridViewCross" android:gravity="center" android:background="#00000000"></GridView>
 </LinearLayout>

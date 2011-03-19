@@ -3,10 +3,13 @@ package com.zrd.zr;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -15,6 +18,8 @@ import android.widget.AdapterView.OnItemClickListener;
 public class VanicrossActivity extends Activity {
 	static DisplayMetrics mDisplayMetrics = new DisplayMetrics();;
 	GridView mGridCross;
+	AlertDialog mMenuDialog;
+	AlertDialog mTipsDialog;
 	
     /** Called when the activity is first created. */
     @Override
@@ -25,6 +30,59 @@ public class VanicrossActivity extends Activity {
         mGridCross = (GridView) findViewById(R.id.gridViewCross);
         mGridCross.setNumColumns(VanicrossActivity.getNumColumns());
         mGridCross.setAdapter(new ImageAdapter(this));
+        CharSequence[] items = {
+			"Refresh..."
+		};
+        mMenuDialog = new AlertDialog.Builder(this).
+			setSingleChoiceItems(
+				items, 0,
+				new DialogInterface.OnClickListener() {
+	
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						switch (which) {
+						case 0:
+							ImageAdapter ia = ((ImageAdapter) mGridCross.getAdapter());
+							ia.renewThumbIds();
+							mGridCross.setAdapter(ia);
+							break;
+						case 1:
+							break;
+						case 2:
+							break;
+						}
+						dialog.dismiss();
+					}
+					
+				}
+			).create();
+        mMenuDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+		        	new DialogInterface.OnClickListener() {
+		
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					
+				}
+			
+			}
+		);
+        mMenuDialog.setTitle("Menu");
+        mTipsDialog = new AlertDialog.Builder(this).create();
+        mTipsDialog.setTitle("Tips");
+        mTipsDialog.setMessage("You could \"LONG CLICK\" the screen to get menu.");
+        mTipsDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
+        	new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					
+				}
+        	
+        	}
+        );
         
         mGridCross.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -46,7 +104,7 @@ public class VanicrossActivity extends Activity {
 				if (vanBlks.size() == 0) {//no blocks should be vanished
 					Toast.makeText(VanicrossActivity.this,
 						"oooops...\nNo same color blocks at the corss.",
-						Toast.LENGTH_LONG
+						Toast.LENGTH_SHORT
 					).show();
 					return;
 				}
@@ -59,6 +117,20 @@ public class VanicrossActivity extends Activity {
 				return;
 			}
         });
+        
+        mGridCross.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				mMenuDialog.show();
+				return true;
+			}
+        	
+        });
+        
+        mTipsDialog.show();
     }
     
     public int[] get4Blocks(int position) {
@@ -163,6 +235,6 @@ public class VanicrossActivity extends Activity {
     
     public static int convertDip2Pix(int dp) {
     	if (mDisplayMetrics.widthPixels == 0) return 0;
-    	return (int)(dp / mDisplayMetrics.density);
+    	return (int)(dp * mDisplayMetrics.density);
     }
 }

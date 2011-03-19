@@ -12,25 +12,18 @@ import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter {
 	private Context mContext;
-	public final static int mBlockWidth = 48;
+	public final static int mBlockWidth = VanicrossActivity.convertDip2Pix(32);
 	public final static int mBlockPadding = 2;
 	private ArrayList<Integer> mThumbIds = new ArrayList<Integer>();
+	private Integer mColors[] = {
+		R.drawable.block_darkgreen, R.drawable.block_lightgreen, R.drawable.block_orange, R.drawable.block_dark,
+		R.drawable.block_purple, R.drawable.block_red, R.drawable.block_skyblue, R.drawable.block_yellow,
+		R.drawable.pineapple, R.drawable.pineapple
+	};
 	
 	public ImageAdapter (Context c) {
 		this.mContext = c;
-		Integer iColors[] = {
-			R.drawable.block_darkgreen, R.drawable.block_lightgreen, R.drawable.block_orange, R.drawable.block_dark,
-			R.drawable.block_purple, R.drawable.block_red, R.drawable.block_skyblue, R.drawable.block_yellow,
-			R.drawable.pineapple, R.drawable.pineapple
-		};
-		int iTotal = VanicrossActivity.getNumColumns() * VanicrossActivity.getNumRows();
-		Random random = new Random((int) Math.random() * 100);
-		for (int i = 0; i < iTotal; i++) {
-			int m = Math.abs(random.nextInt());
-			int n = iColors.length;
-			int l = m % n;
-			mThumbIds.add(iColors[l]);
-		}
+		renewThumbIds();
 	}
 
 	public ArrayList<Integer> getThumbIds() {
@@ -39,6 +32,18 @@ public class ImageAdapter extends BaseAdapter {
 	
 	public void setThumbIdAt(int idx, Integer id) {
 		mThumbIds.set(idx, id);
+	}
+	
+	public void renewThumbIds() {
+		int iTotal = VanicrossActivity.getNumColumns() * VanicrossActivity.getNumRows();
+		Random random = new Random((int) (Math.random() * 100));
+		mThumbIds.clear();
+		for (int i = 0; i < iTotal; i++) {
+			int m = Math.abs(random.nextInt());
+			int n = mColors.length;
+			int l = m % n;
+			mThumbIds.add(mColors[l]);
+		}
 	}
 
 	@Override
