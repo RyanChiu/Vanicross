@@ -1,0 +1,4 @@
+bin
+bin/*.class
+bin/*.dex
+bin/*.apk
