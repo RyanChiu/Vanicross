@@ -1,4 +1,4 @@
-package com.zrd.zr;
+package com.zrd.zr.game;
 
 import java.util.ArrayList;
 
@@ -94,12 +94,12 @@ public class VanicrossActivity extends Activity {
 				
 				ArrayList<Integer> vanBlks = getVanBlocks(blks);
 				
-				//for debug
+				/*//for debug
 				Toast.makeText(VanicrossActivity.this,
 					"left:" + blks[0] + ", top:" + blks[1] + ", right:" + blks[2] + ", bottom:" + blks[3],
 					Toast.LENGTH_SHORT
 				).show();
-				
+				*/
 				
 				if (vanBlks.size() == 0) {//no blocks should be vanished
 					Toast.makeText(VanicrossActivity.this,

@@ -1,4 +1,4 @@
-package com.zrd.zr;
+package com.zrd.zr.game;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -16,8 +16,10 @@ public class ImageAdapter extends BaseAdapter {
 	public final static int mBlockPadding = 2;
 	private ArrayList<Integer> mThumbIds = new ArrayList<Integer>();
 	private Integer mColors[] = {
-		R.drawable.block_darkgreen, R.drawable.block_lightgreen, R.drawable.block_orange, R.drawable.block_dark,
-		R.drawable.block_purple, R.drawable.block_red, R.drawable.block_skyblue, R.drawable.block_yellow,
+		//R.drawable.block_darkgreen, R.drawable.block_lightgreen, R.drawable.block_orange, R.drawable.block_dark,
+		//R.drawable.block_purple, R.drawable.block_red, R.drawable.block_skyblue, R.drawable.block_yellow,
+		R.drawable.ball_black, R.drawable.ball_blue, R.drawable.ball_green, R.drawable.ball_purple,
+		R.drawable.ball_red, R.drawable.ball_skyblue, R.drawable.ball_yellow,
 		R.drawable.pineapple, R.drawable.pineapple
 	};
 	
@@ -73,6 +75,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView.setLayoutParams(
             	new GridView.LayoutParams(mBlockWidth, mBlockWidth)
             );//set width & height for ImageView
+            imageView.setBackgroundResource(R.drawable.pineapple);
             imageView.setAdjustViewBounds(false); 
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setPadding(mBlockPadding, mBlockPadding, mBlockPadding, mBlockPadding);
