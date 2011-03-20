@@ -31,7 +31,8 @@ public class VanicrossActivity extends Activity {
         mGridCross.setNumColumns(VanicrossActivity.getNumColumns());
         mGridCross.setAdapter(new ImageAdapter(this));
         CharSequence[] items = {
-			"Refresh..."
+			"Refresh...",
+			"Next theme..."
 		};
         mMenuDialog = new AlertDialog.Builder(this).
 			setSingleChoiceItems(
@@ -41,13 +42,15 @@ public class VanicrossActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
+						ImageAdapter ia = ((ImageAdapter) mGridCross.getAdapter());
 						switch (which) {
 						case 0:
-							ImageAdapter ia = ((ImageAdapter) mGridCross.getAdapter());
 							ia.renewThumbIds();
 							mGridCross.setAdapter(ia);
 							break;
 						case 1:
+							ia.changeThumbIds(ia.getColorsCurIndex() + 1);
+							mGridCross.setAdapter(ia);
 							break;
 						case 2:
 							break;

@@ -16,22 +16,25 @@ public class ImageAdapter extends BaseAdapter {
 	public final static int mBlockPadding = 2;
 	private ArrayList<Integer> mThumbIds = new ArrayList<Integer>();
 	private Integer mColors[] = {
-		//R.drawable.block_darkgreen, R.drawable.block_lightgreen, R.drawable.block_orange, R.drawable.block_dark,
-		//R.drawable.block_purple, R.drawable.block_red, R.drawable.block_skyblue, R.drawable.block_yellow,
 		R.drawable.ball_black, R.drawable.ball_blue, R.drawable.ball_green, R.drawable.ball_purple,
 		R.drawable.ball_red, R.drawable.ball_skyblue, R.drawable.ball_yellow,
 		R.drawable.pineapple, R.drawable.pineapple
 	};
+	private int mColorsCurIndex = 0;
 	
 	public ImageAdapter (Context c) {
 		this.mContext = c;
-		renewThumbIds();
+		changeThumbIds(mColorsCurIndex);
 	}
 
 	public ArrayList<Integer> getThumbIds() {
 		return mThumbIds;
 	}
 	
+	public int getColorsCurIndex() {
+		return mColorsCurIndex;
+	}
+
 	public void setThumbIdAt(int idx, Integer id) {
 		mThumbIds.set(idx, id);
 	}
@@ -46,6 +49,29 @@ public class ImageAdapter extends BaseAdapter {
 			int l = m % n;
 			mThumbIds.add(mColors[l]);
 		}
+	}
+	
+	public void changeThumbIds(int idx) {
+		Integer colors[][] = {
+			{
+				R.drawable.ball_black, R.drawable.ball_blue, R.drawable.ball_green, R.drawable.ball_purple,
+				R.drawable.ball_red, R.drawable.ball_skyblue, R.drawable.ball_yellow,
+				R.drawable.pineapple, R.drawable.pineapple
+			},
+			{
+				R.drawable.block_darkgreen, R.drawable.block_lightgreen, R.drawable.block_orange, R.drawable.block_dark,
+				R.drawable.block_purple, R.drawable.block_red, R.drawable.block_skyblue, R.drawable.block_yellow,
+				R.drawable.pineapple, R.drawable.pineapple
+			}
+		};
+		if (idx < 0) {
+			idx = 0;
+		} else {
+			idx = idx % colors.length;
+		}
+		mColors = colors[idx];
+		mColorsCurIndex = idx;
+		renewThumbIds();
 	}
 
 	@Override
