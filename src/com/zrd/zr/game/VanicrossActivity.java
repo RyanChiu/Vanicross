@@ -25,6 +25,7 @@ public class VanicrossActivity extends Activity {
 	AlertDialog mQuitDialog;
 	private SharedPreferences mPreferences = null;
 	private final String mCfgDoNotShowTips = "DoNotShowTips";
+	int mScore = 0;
 	
     /** Called when the activity is first created. */
     @Override
@@ -55,14 +56,20 @@ public class VanicrossActivity extends Activity {
 						case 0:
 							ia.renewThumbIds();
 							mGridCross.setAdapter(ia);
+							mScore = 0;
+							setTitle("Score: " + mScore);
 							break;
 						case 1:
 							ia.changeThumbIds(ia.getColorsCurIndex() + 1);
 							mGridCross.setAdapter(ia);
+							mScore = 0;
+							setTitle("Score: " + mScore);
 							break;
 						case 2:
 							ia.changeThumbIds(ia.getRandomColorIndex());
 							mGridCross.setAdapter(ia);
+							mScore = 0;
+							setTitle("Score: " + mScore);
 							break;
 						case 3:
 							mTipsDialog.show();
@@ -150,12 +157,20 @@ public class VanicrossActivity extends Activity {
 					).show();
 					return;
 				}
+				/*
+				 * vanish the blocks
+				 */
 				for (int i = 0; i < vanBlks.size(); i++) {
 					ImageView iv;
 					iv = (ImageView) mGridCross.getChildAt(vanBlks.get(i));
 					iv.setImageResource(R.drawable.pineapple);
 					((ImageAdapter) mGridCross.getAdapter()).setThumbIdAt(vanBlks.get(i), R.drawable.pineapple);
 				}
+				/*
+				 * show scores
+				 */
+				String title = "Score: " + mScore;
+				VanicrossActivity.this.setTitle(title);
 				return;
 			}
         });
@@ -254,33 +269,54 @@ public class VanicrossActivity extends Activity {
 		return blks;
     }
     
-    public ArrayList<Integer> getVanBlocks(int[] blks) {
+    private ArrayList<Integer> getVanBlocks(int[] blks) {
     	ArrayList<Integer> lst = ((ImageAdapter) mGridCross.getAdapter()).getThumbIds();
     	ArrayList<Integer> lstBlks = new ArrayList<Integer>();
 		for (int i = 0; i < blks.length; i++) {
 			if (blks[i] >= 0) lstBlks.add(blks[i]);
 		}
-		ArrayList<Integer> lstColors = new ArrayList<Integer>();
-		for (int i = 0; i < lstBlks.size(); i++) {
-			lstColors.add(lst.get(lstBlks.get(i)));
-		}
 		ArrayList<Integer> lstRepeat = new ArrayList<Integer>();
-		for (int i = 0; i < lstColors.size(); i++) {
+		for (int i = 0; i < lstBlks.size(); i++) {
 			int n = 0;
-			for (int j = 0; j < lstColors.size(); j++) {
-				if (lstColors.get(i) == lstColors.get(j)) {
+			for (int j = 0; j < lstBlks.size(); j++) {
+				if (lst.get(lstBlks.get(i)) == lst.get(lstBlks.get(j))) {
 					n++;
 				}
 			}
 			lstRepeat.add(n);
 		}
+		
+		int k = 0;
+		int score = 0;
+		for (int i = 0; i < lstRepeat.size(); i++) {
+			k += lstRepeat.get(i);
+		}
+		if (lstRepeat.size() < 2) score = 0;
+		if (lstRepeat.size() == 2) {
+			if (k == (1 + 1)) score = 0;
+			if (k == (2 + 2)) score = 2;
+		}
+		if (lstRepeat.size() == 3) {
+			if (k == (1 + 1 + 1)) score = 0;
+			if (k == (1 + 2 + 2)) score = 2;
+			if (k == (3 + 3 + 3)) score = 4;
+		}
+		if (lstRepeat.size() == 4) {
+			if (k == (1 + 1 + 1 + 1)) score = 0;
+			if (k == (1 + 1 + 2 + 2)) score = 2;
+			if (k == (1 + 3 + 3 + 3)) score = 4;
+			if (k == (4 + 4 + 4 + 4)) score = 8;
+			if (k == (2 + 2 + 2 + 2)) score = 10;
+		}
+		mScore += score;
+		
 		ArrayList<Integer> vanBlks = new ArrayList<Integer>();
 		for (int i = 0; i < lstRepeat.size(); i++) {
 			if (lstRepeat.get(i) > 1) vanBlks.add(lstBlks.get(i));
 		}
 		return vanBlks;
     }
-    
+        
     public int[] getXY(int position) {
     	int[] xy = {-1, -1};
     	if (position < 0) return xy;
