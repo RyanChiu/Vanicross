@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -20,19 +22,25 @@ public class VanicrossActivity extends Activity {
 	GridView mGridCross;
 	AlertDialog mMenuDialog;
 	AlertDialog mTipsDialog;
+	AlertDialog mQuitDialog;
+	private SharedPreferences mPreferences = null;
+	private final String mCfgDoNotShowTips = "DoNotShowTips";
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        mPreferences = getPreferences(VanicrossActivity.MODE_PRIVATE);
         getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
         mGridCross = (GridView) findViewById(R.id.gridViewCross);
         mGridCross.setNumColumns(VanicrossActivity.getNumColumns());
         mGridCross.setAdapter(new ImageAdapter(this));
         CharSequence[] items = {
 			"Refresh...",
-			"Next theme..."
+			"Next theme...",
+			"Random theme...",
+			"Show tips..."
 		};
         mMenuDialog = new AlertDialog.Builder(this).
 			setSingleChoiceItems(
@@ -53,6 +61,11 @@ public class VanicrossActivity extends Activity {
 							mGridCross.setAdapter(ia);
 							break;
 						case 2:
+							ia.changeThumbIds(ia.getRandomColorIndex());
+							mGridCross.setAdapter(ia);
+							break;
+						case 3:
+							mTipsDialog.show();
 							break;
 						}
 						dialog.dismiss();
@@ -72,9 +85,35 @@ public class VanicrossActivity extends Activity {
 			}
 		);
         mMenuDialog.setTitle("Menu");
-        mTipsDialog = new AlertDialog.Builder(this).create();
+        mTipsDialog = new AlertDialog.Builder(this)
+        	.setMultiChoiceItems(new CharSequence[] {"I knew long click to menu."}, null,
+        		new DialogInterface.OnMultiChoiceClickListener() {
+
+					@Override
+					public void onClick(DialogInterface arg0, int which,
+							boolean isChecked) {
+						// TODO Auto-generated method stub
+						switch (which) {
+						case 0:
+							SharedPreferences.Editor editor = mPreferences.edit();
+							if (isChecked) {
+								editor.putBoolean(mCfgDoNotShowTips, true);
+								editor.commit();
+							} else {
+								editor.putBoolean(mCfgDoNotShowTips, false);
+								editor.commit();
+							}
+							break;
+						default:
+							break;
+						}
+					}
+        		
+        		}
+        	)
+        	.create();
         mTipsDialog.setTitle("Tips");
-        mTipsDialog.setMessage("You could \"LONG CLICK\" the screen to get menu.");
+        //mTipsDialog.setMessage("You could \"LONG CLICK\" the screen to get menu.");
         mTipsDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
         	new DialogInterface.OnClickListener() {
 
@@ -133,9 +172,44 @@ public class VanicrossActivity extends Activity {
         	
         });
         
-        mTipsDialog.show();
+        if (!mPreferences.getBoolean(mCfgDoNotShowTips, false)) {
+        	mTipsDialog.show();
+        }
     }
     
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			mQuitDialog = new AlertDialog.Builder(VanicrossActivity.this).create();
+			mQuitDialog.setTitle("Are you sure to quit?");
+			mQuitDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						android.os.Process.killProcess(android.os.Process.myPid());
+					}
+				
+				}
+			);
+			mQuitDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "No",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+					}
+				
+				}
+			);
+			mQuitDialog.show();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
     public int[] get4Blocks(int position) {
     	int[] xy;
     	int[] blks = new int[4];//0 left, 1 top, 2 right, 3 bottom

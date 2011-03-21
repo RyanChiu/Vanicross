@@ -24,11 +24,21 @@ public class ImageAdapter extends BaseAdapter {
 	
 	public ImageAdapter (Context c) {
 		this.mContext = c;
+		mColorsCurIndex = getRandomColorIndex();
 		changeThumbIds(mColorsCurIndex);
 	}
 
 	public ArrayList<Integer> getThumbIds() {
 		return mThumbIds;
+	}
+	
+	public int getRandomColorIndex() {
+		int idx = 0;
+		Random random = new Random((int) (Math.random() * 100));
+		int m = Math.abs(random.nextInt());
+		int l = changeThumbIds(-1);
+		idx = m % l;
+		return idx;
 	}
 	
 	public int getColorsCurIndex() {
@@ -51,7 +61,7 @@ public class ImageAdapter extends BaseAdapter {
 		}
 	}
 	
-	public void changeThumbIds(int idx) {
+	public int changeThumbIds(int idx) {
 		Integer colors[][] = {
 			{
 				R.drawable.ball_black, R.drawable.ball_blue, R.drawable.ball_green, R.drawable.ball_purple,
@@ -62,16 +72,38 @@ public class ImageAdapter extends BaseAdapter {
 				R.drawable.block_darkgreen, R.drawable.block_lightgreen, R.drawable.block_orange, R.drawable.block_dark,
 				R.drawable.block_purple, R.drawable.block_red, R.drawable.block_skyblue, R.drawable.block_yellow,
 				R.drawable.pineapple, R.drawable.pineapple
+			},
+			{
+				R.drawable.heart_darksky, R.drawable.heart_gray, R.drawable.heart_green, R.drawable.heart_lightbrown,
+				R.drawable.heart_orange, R.drawable.heart_pink, R.drawable.heart_purple, R.drawable.heart_red,
+				R.drawable.pineapple, R.drawable.pineapple
+			},
+			{
+				R.drawable.dice_blue, R.drawable.dice_dark, R.drawable.dice_green,
+				R.drawable.dice_orange, R.drawable.dice_purple, R.drawable.dice_red,
+				R.drawable.pineapple, R.drawable.pineapple
+			},
+			{
+				R.drawable.flower_001, R.drawable.flower_002, R.drawable.flower_003, R.drawable.flower_004,
+				R.drawable.flower_005, R.drawable.flower_006, R.drawable.flower_007, R.drawable.flower_008,
+				R.drawable.pineapple, R.drawable.pineapple
+			},
+			{
+				R.drawable.apple_001, R.drawable.apple_002, R.drawable.apple_003, R.drawable.apple_004, R.drawable.apple_005,
+				R.drawable.apple_006, R.drawable.apple_007, R.drawable.apple_008, R.drawable.apple_009, R.drawable.apple_010,
+				R.drawable.pineapple, R.drawable.pineapple
 			}
 		};
 		if (idx < 0) {
-			idx = 0;
+			idx = mColorsCurIndex;
+			return colors.length;
 		} else {
 			idx = idx % colors.length;
 		}
 		mColors = colors[idx];
 		mColorsCurIndex = idx;
 		renewThumbIds();
+		return colors.length;
 	}
 
 	@Override
