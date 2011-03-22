@@ -1,6 +1,14 @@
 package com.zrd.zr.game;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+
+import org.apache.commons.codec.binary.Base64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,13 +20,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class VanicrossActivity extends Activity {
 	static DisplayMetrics mDisplayMetrics = new DisplayMetrics();
@@ -32,6 +40,8 @@ public class VanicrossActivity extends Activity {
 	AlphaAnimation fadeoutAnim = new AlphaAnimation(1.0f, 0.1f);
 	private SharedPreferences mPreferences = null;
 	private final String mCfgDoNotShowTips = "DoNotShowTips";
+	private final String mCfgScoresBulletin = "ScoreBulletin";
+	ArrayList<ScoreRecord> mScores = new ArrayList<ScoreRecord>();
 	int mScore = 0;
 	
     /** Called when the activity is first created. */
@@ -46,10 +56,12 @@ public class VanicrossActivity extends Activity {
         mGridCross = (GridView) findViewById(R.id.gridViewCross);
         mGridCross.setNumColumns(VanicrossActivity.getNumColumns());
         mGridCross.setAdapter(new ImageAdapter(this));
+        readScores();
         CharSequence[] items = {
 			"Refresh...",
 			"Next theme...",
 			"Random theme...",
+			"Score bulletin...",
 			"Show tips..."
 		};
         mMenuDialog = new AlertDialog.Builder(this).
@@ -80,7 +92,37 @@ public class VanicrossActivity extends Activity {
 							mScore = 0;
 							mTextScore.setText("" + mScore);
 							break;
-						case 3:
+						case 3://score bulletin
+							readScores();
+							AlertDialog dlg = new AlertDialog.Builder(VanicrossActivity.this).create();
+							dlg.setTitle("Score bulletin");
+							String msg = "";
+							for (int i = 0; i < mScores.size(); i++) {
+								ScoreRecord sr = mScores.get(i);
+								msg += sr.mName + ": \t" + sr.mScore;
+								if (i != mScores.size() - 1) {
+									msg += "\n";
+								}
+							}
+							dlg.setMessage(msg);
+							dlg.setButton(
+								DialogInterface.BUTTON_POSITIVE,
+								"OK",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(
+											DialogInterface dialog,
+											int which) {
+										// TODO Auto-generated method stub
+										
+									}
+									
+								}
+							);
+							dlg.show();
+							break;
+						case 4:
 							mTipsDialog.show();
 							break;
 						}
@@ -196,8 +238,10 @@ public class VanicrossActivity extends Activity {
 					).show();
 					*/
 				} else {
+					boolean isScoreRecorded = recordScore(new ScoreRecord("noname", mScore));
 					Toast.makeText(VanicrossActivity.this,
-						"oooops...\nSeems that there is no more blocks could be vanished.",
+						"oooops...\nNo more blocks could be vanished."
+							+ (isScoreRecorded ? "\n(Score recorded.)" : ""),
 						Toast.LENGTH_LONG
 					).show();
 					mMenuDialog.show();
@@ -221,7 +265,7 @@ public class VanicrossActivity extends Activity {
         if (!mPreferences.getBoolean(mCfgDoNotShowTips, false)) {
         	mTipsDialog.show();
         }
-    }
+   }
     
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -401,5 +445,59 @@ public class VanicrossActivity extends Activity {
     public static int convertDip2Pix(int dp) {
     	if (mDisplayMetrics.widthPixels == 0) return 0;
     	return (int)(dp * mDisplayMetrics.density);
+    }
+    
+    public boolean recordScore(ScoreRecord score) {
+    	int i, tops = 3;
+    	for (i = 0; i < mScores.size(); i++) {
+    		if (mScores.get(i).mScore < score.mScore) {
+    			mScores.add(i, score);
+    			break;
+    		}
+    	}
+    	if (i == mScores.size()) {
+    		mScores.add(mScores.size(), score);
+    	}
+    	if (mScores.size() > tops) {
+    		for (i = tops; i < mScores.size(); i++) {
+    			mScores.remove(tops);
+    		}
+    	}
+        try {
+        	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        	ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(mScores);
+			String sScores = new String(Base64.encodeBase64(baos.toByteArray()));
+			SharedPreferences.Editor editor = mPreferences.edit();
+			editor.putString(mCfgScoresBulletin, sScores);
+			editor.commit();
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+    }
+    
+    @SuppressWarnings("unchecked")
+	public void readScores() {
+    	String sScores = "";
+		try {
+			sScores = mPreferences.getString(mCfgScoresBulletin, "");
+			ByteArrayInputStream bais = new ByteArrayInputStream(
+				Base64.decodeBase64(sScores.getBytes())
+			);
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			mScores = (ArrayList<ScoreRecord>)ois.readObject();
+		} catch (StreamCorruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }

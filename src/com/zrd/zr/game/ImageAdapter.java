@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter {
 	private Context mContext;
-	public final static int mBlockWidth = VanicrossActivity.convertDip2Pix(32);
+	public final static int mBlockWidth = VanicrossActivity.convertDip2Pix(36);
 	private ArrayList<Integer> mThumbIds = new ArrayList<Integer>();
 	private Integer mColors[];
 	private int mColorsCurIndex = 0;
