@@ -15,11 +15,15 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class VanicrossActivity extends Activity {
-	static DisplayMetrics mDisplayMetrics = new DisplayMetrics();;
+	static DisplayMetrics mDisplayMetrics = new DisplayMetrics();
+	static LinearLayout mLayoutTop;
+	TextView mTextScore;
 	GridView mGridCross;
 	AlertDialog mMenuDialog;
 	AlertDialog mTipsDialog;
@@ -37,6 +41,8 @@ public class VanicrossActivity extends Activity {
         setContentView(R.layout.main);
         mPreferences = getPreferences(VanicrossActivity.MODE_PRIVATE);
         getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
+        mLayoutTop = (LinearLayout) findViewById(R.id.linearLayoutTop);
+        mTextScore = (TextView) findViewById(R.id.tvScore);
         mGridCross = (GridView) findViewById(R.id.gridViewCross);
         mGridCross.setNumColumns(VanicrossActivity.getNumColumns());
         mGridCross.setAdapter(new ImageAdapter(this));
@@ -60,19 +66,19 @@ public class VanicrossActivity extends Activity {
 							ia.renewThumbIds();
 							mGridCross.setAdapter(ia);
 							mScore = 0;
-							setTitle("Score: " + mScore);
+							mTextScore.setText("" + mScore);
 							break;
 						case 1:
 							ia.changeThumbIds(ia.getColorsCurIndex() + 1);
 							mGridCross.setAdapter(ia);
 							mScore = 0;
-							setTitle("Score: " + mScore);
+							mTextScore.setText("" + mScore);
 							break;
 						case 2:
 							ia.changeThumbIds(ia.getRandomColorIndex());
 							mGridCross.setAdapter(ia);
 							mScore = 0;
-							setTitle("Score: " + mScore);
+							mTextScore.setText("" + mScore);
 							break;
 						case 3:
 							mTipsDialog.show();
@@ -96,7 +102,7 @@ public class VanicrossActivity extends Activity {
 		);
         mMenuDialog.setTitle("Menu");
         mTipsDialog = new AlertDialog.Builder(this)
-        	.setMultiChoiceItems(new CharSequence[] {"I knew long click to menu."}, null,
+        	.setMultiChoiceItems(new CharSequence[] {"I knew LONG CLICK could get menu."}, null,
         		new DialogInterface.OnMultiChoiceClickListener() {
 
 					@Override
@@ -174,17 +180,21 @@ public class VanicrossActivity extends Activity {
 				/*
 				 * show scores
 				 */
-				String title = "Score: " + mScore;
-				VanicrossActivity.this.setTitle(title);
+				mTextScore.setText("" + mScore);
 				/*
 				 * check if any blocks could be vanished
 				 */
 				ArrayList<Integer> alVanishableBlocks = getVanishableBlocks();
 				if (alVanishableBlocks.size() != 0) {
+					/*
+					 * show how many blank block could be click to vanish blocks at cross
+					 */
+					/*
 					Toast.makeText(VanicrossActivity.this,
-						alVanishableBlocks.size() + "more.",
+						alVanishableBlocks.size() + " more.",
 						Toast.LENGTH_SHORT
 					).show();
+					*/
 				} else {
 					Toast.makeText(VanicrossActivity.this,
 						"oooops...\nSeems that there is no more blocks could be vanished.",
@@ -377,13 +387,15 @@ public class VanicrossActivity extends Activity {
     }
     
     public static int getNumColumns() {
-    	if (mDisplayMetrics.widthPixels == 0) return 12;
-    	return (int) Math.floor(mDisplayMetrics.widthPixels / (ImageAdapter.mBlockWidth + ImageAdapter.mBlockPadding * 2));
+    	if (mDisplayMetrics.widthPixels == 0) return 9;
+    	int num = (int) Math.floor(mDisplayMetrics.widthPixels / (ImageAdapter.mBlockWidth + 1 * 2));
+    	return num;
     }
     
     public static int getNumRows() {
-    	if (mDisplayMetrics.heightPixels == 0) return 9;
-    	return (int) Math.floor(mDisplayMetrics.heightPixels / (ImageAdapter.mBlockWidth + ImageAdapter.mBlockPadding * 2));
+    	if (mDisplayMetrics.heightPixels == 0) return 12;
+    	int num = (int) Math.floor((mDisplayMetrics.heightPixels - convertDip2Pix(32)) / (ImageAdapter.mBlockWidth + 1 * 2));
+    	return num;
     }
     
     public static int convertDip2Pix(int dp) {

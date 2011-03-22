@@ -4,5 +4,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/bg_gray">
-    <GridView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/gridViewCross" android:gravity="center" android:background="#00000000"></GridView>
+    <LinearLayout android:layout_width="fill_parent" android:id="@+id/linearLayoutTop" android:layout_height="32dp" android:background="#66000000">
+        <RelativeLayout android:id="@+id/relativeLayout1" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <LinearLayout android:id="@+id/linearLayout1" android:layout_width="wrap_content" android:layout_alignParentRight="true" android:layout_height="fill_parent" android:gravity="center" android:paddingRight="3dp">
+                <TextView android:layout_height="wrap_content" android:id="@+id/textView1" android:layout_width="wrap_content" android:text="Score: " android:textColor="#8cb7e7" android:textStyle="bold"></TextView>
+                <TextView android:id="@+id/tvScore" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="#8cb7e7" android:textStyle="bold"></TextView>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+    <GridView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/gridViewCross" android:gravity="center" android:verticalSpacing="1px" android:horizontalSpacing="1px"></GridView>
 </LinearLayout>

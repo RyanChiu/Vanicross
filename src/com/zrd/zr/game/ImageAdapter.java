@@ -13,13 +13,8 @@ import android.widget.ImageView;
 public class ImageAdapter extends BaseAdapter {
 	private Context mContext;
 	public final static int mBlockWidth = VanicrossActivity.convertDip2Pix(32);
-	public final static int mBlockPadding = 2;
 	private ArrayList<Integer> mThumbIds = new ArrayList<Integer>();
-	private Integer mColors[] = {
-		R.drawable.ball_black, R.drawable.ball_blue, R.drawable.ball_green, R.drawable.ball_purple,
-		R.drawable.ball_red, R.drawable.ball_skyblue, R.drawable.ball_yellow,
-		R.drawable.pineapple, R.drawable.pineapple
-	};
+	private Integer mColors[];
 	private int mColorsCurIndex = 0;
 	
 	public ImageAdapter (Context c) {
@@ -135,7 +130,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView.setBackgroundResource(R.drawable.pineapple);
             imageView.setAdjustViewBounds(false); 
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setPadding(mBlockPadding, mBlockPadding, mBlockPadding, mBlockPadding);
+            imageView.setPadding(2, 2, 2, 2);
         } else { 
             imageView = (ImageView) convertView; 
         } 
