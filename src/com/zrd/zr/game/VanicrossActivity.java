@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
@@ -23,6 +24,8 @@ public class VanicrossActivity extends Activity {
 	AlertDialog mMenuDialog;
 	AlertDialog mTipsDialog;
 	AlertDialog mQuitDialog;
+	AlphaAnimation fadeinAnim = new AlphaAnimation(0.1f, 1.0f);
+	AlphaAnimation fadeoutAnim = new AlphaAnimation(1.0f, 0.1f);
 	private SharedPreferences mPreferences = null;
 	private final String mCfgDoNotShowTips = "DoNotShowTips";
 	int mScore = 0;
@@ -141,7 +144,7 @@ public class VanicrossActivity extends Activity {
 				if (lst.get(position) != R.drawable.pineapple) return;
 				int[] blks = get4Blocks(position);
 				
-				ArrayList<Integer> vanBlks = getVanBlocks(blks);
+				ArrayList<Integer> vanBlks = getVanBlocks(blks, true);
 				
 				/*//for debug
 				Toast.makeText(VanicrossActivity.this,
@@ -161,16 +164,34 @@ public class VanicrossActivity extends Activity {
 				 * vanish the blocks
 				 */
 				for (int i = 0; i < vanBlks.size(); i++) {
-					ImageView iv;
-					iv = (ImageView) mGridCross.getChildAt(vanBlks.get(i));
+					ImageAdapter ia = (ImageAdapter) mGridCross.getAdapter();
+					ImageView iv = (ImageView) mGridCross.getChildAt(vanBlks.get(i));
 					iv.setImageResource(R.drawable.pineapple);
-					((ImageAdapter) mGridCross.getAdapter()).setThumbIdAt(vanBlks.get(i), R.drawable.pineapple);
+					fadeinAnim.setDuration(900);
+					iv.startAnimation(fadeinAnim);
+					(ia).setThumbIdAt(vanBlks.get(i), R.drawable.pineapple);
 				}
 				/*
 				 * show scores
 				 */
 				String title = "Score: " + mScore;
 				VanicrossActivity.this.setTitle(title);
+				/*
+				 * check if any blocks could be vanished
+				 */
+				ArrayList<Integer> alVanishableBlocks = getVanishableBlocks();
+				if (alVanishableBlocks.size() != 0) {
+					Toast.makeText(VanicrossActivity.this,
+						alVanishableBlocks.size() + "more.",
+						Toast.LENGTH_SHORT
+					).show();
+				} else {
+					Toast.makeText(VanicrossActivity.this,
+						"oooops...\nSeems that there is no more blocks could be vanished.",
+						Toast.LENGTH_LONG
+					).show();
+					mMenuDialog.show();
+				}
 				return;
 			}
         });
@@ -225,6 +246,9 @@ public class VanicrossActivity extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
+	/*
+	 * the return value includes 4 positions of items of ImageAdapter.mThumbIds
+	 */
     public int[] get4Blocks(int position) {
     	int[] xy;
     	int[] blks = new int[4];//0 left, 1 top, 2 right, 3 bottom
@@ -269,7 +293,7 @@ public class VanicrossActivity extends Activity {
 		return blks;
     }
     
-    private ArrayList<Integer> getVanBlocks(int[] blks) {
+    private ArrayList<Integer> getVanBlocks(int[] blks, boolean setScore) {
     	ArrayList<Integer> lst = ((ImageAdapter) mGridCross.getAdapter()).getThumbIds();
     	ArrayList<Integer> lstBlks = new ArrayList<Integer>();
 		for (int i = 0; i < blks.length; i++) {
@@ -308,7 +332,7 @@ public class VanicrossActivity extends Activity {
 			if (k == (4 + 4 + 4 + 4)) score = 8;
 			if (k == (2 + 2 + 2 + 2)) score = 10;
 		}
-		mScore += score;
+		if (setScore) mScore += score;
 		
 		ArrayList<Integer> vanBlks = new ArrayList<Integer>();
 		for (int i = 0; i < lstRepeat.size(); i++) {
@@ -316,7 +340,23 @@ public class VanicrossActivity extends Activity {
 		}
 		return vanBlks;
     }
-        
+     
+    /*
+     * the return value holds all blocks' positions that could point to vanish other blocks at the cross
+     */
+    public ArrayList<Integer> getVanishableBlocks() {
+    	ArrayList<Integer> blks = new ArrayList<Integer>();
+    	ArrayList<Integer> lst = ((ImageAdapter) mGridCross.getAdapter()).getThumbIds();
+    	for (int i = 0; i < lst.size(); i++) {
+    		if (lst.get(i) == R.drawable.pineapple) {
+    			if (getVanBlocks(get4Blocks(i), false).size() != 0) {
+    				blks.add(i);
+    			}
+    		}
+    	}
+    	return blks;
+    }
+    
     public int[] getXY(int position) {
     	int[] xy = {-1, -1};
     	if (position < 0) return xy;

@@ -45,6 +45,10 @@ public class ImageAdapter extends BaseAdapter {
 		return mColorsCurIndex;
 	}
 
+	public Integer getThumbIdAt(int idx) {
+		return mThumbIds.get(idx);
+	}
+	
 	public void setThumbIdAt(int idx, Integer id) {
 		mThumbIds.set(idx, id);
 	}
@@ -86,11 +90,6 @@ public class ImageAdapter extends BaseAdapter {
 			{
 				R.drawable.flower_001, R.drawable.flower_002, R.drawable.flower_003, R.drawable.flower_004,
 				R.drawable.flower_005, R.drawable.flower_006, R.drawable.flower_007, R.drawable.flower_008,
-				R.drawable.pineapple, R.drawable.pineapple
-			},
-			{
-				R.drawable.apple_001, R.drawable.apple_002, R.drawable.apple_003, R.drawable.apple_004, R.drawable.apple_005,
-				R.drawable.apple_006, R.drawable.apple_007, R.drawable.apple_008, R.drawable.apple_009, R.drawable.apple_010,
 				R.drawable.pineapple, R.drawable.pineapple
 			}
 		};
