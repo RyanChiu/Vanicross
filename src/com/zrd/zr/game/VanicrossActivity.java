@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.SingleLineTransformationMethod;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,6 +45,8 @@ public class VanicrossActivity extends Activity {
 	private final String mCfgScoresBulletin = "ScoreBulletin";
 	ArrayList<ScoreRecord> mScores = new ArrayList<ScoreRecord>();
 	int mScore = 0;
+	EditText mEditScoreName = null;
+	private boolean mShowMenuAfter = false;
 	
     /** Called when the activity is first created. */
     @Override
@@ -56,6 +60,8 @@ public class VanicrossActivity extends Activity {
         mGridCross = (GridView) findViewById(R.id.gridViewCross);
         mGridCross.setNumColumns(VanicrossActivity.getNumColumns());
         mGridCross.setAdapter(new ImageAdapter(this));
+        mEditScoreName = new EditText(this);
+        mEditScoreName.setTransformationMethod(SingleLineTransformationMethod.getInstance());
         readScores();
         CharSequence[] items = {
 			"Refresh...",
@@ -65,8 +71,8 @@ public class VanicrossActivity extends Activity {
 			"Show tips..."
 		};
         mMenuDialog = new AlertDialog.Builder(this).
-			setSingleChoiceItems(
-				items, 0,
+			setItems(
+				items,
 				new DialogInterface.OnClickListener() {
 	
 					@Override
@@ -93,34 +99,7 @@ public class VanicrossActivity extends Activity {
 							mTextScore.setText("" + mScore);
 							break;
 						case 3://score bulletin
-							readScores();
-							AlertDialog dlg = new AlertDialog.Builder(VanicrossActivity.this).create();
-							dlg.setTitle("Score bulletin");
-							String msg = "";
-							for (int i = 0; i < mScores.size(); i++) {
-								ScoreRecord sr = mScores.get(i);
-								msg += sr.mName + ": \t" + sr.mScore;
-								if (i != mScores.size() - 1) {
-									msg += "\n";
-								}
-							}
-							dlg.setMessage(msg);
-							dlg.setButton(
-								DialogInterface.BUTTON_POSITIVE,
-								"OK",
-								new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(
-											DialogInterface dialog,
-											int which) {
-										// TODO Auto-generated method stub
-										
-									}
-									
-								}
-							);
-							dlg.show();
+							showScoreBulletin();
 							break;
 						case 4:
 							mTipsDialog.show();
@@ -215,7 +194,7 @@ public class VanicrossActivity extends Activity {
 					ImageAdapter ia = (ImageAdapter) mGridCross.getAdapter();
 					ImageView iv = (ImageView) mGridCross.getChildAt(vanBlks.get(i));
 					iv.setImageResource(R.drawable.pineapple);
-					fadeinAnim.setDuration(390);
+					fadeinAnim.setDuration(100);
 					iv.startAnimation(fadeinAnim);
 					(ia).setThumbIdAt(vanBlks.get(i), R.drawable.pineapple);
 				}
@@ -238,13 +217,47 @@ public class VanicrossActivity extends Activity {
 					).show();
 					*/
 				} else {
-					boolean isScoreRecorded = recordScore(new ScoreRecord("noname", mScore));
 					Toast.makeText(VanicrossActivity.this,
-						"oooops...\nNo more blocks could be vanished."
-							+ (isScoreRecorded ? "\n(Score recorded.)" : ""),
+						"oooops...\nNo more blocks could be vanished.",
 						Toast.LENGTH_LONG
 					).show();
-					mMenuDialog.show();
+					if (couldBeInBulletin(mScore)) {
+						/*
+						 * popup a dalog to let client input his/her name
+						 */
+						AlertDialog dlg = new AlertDialog.Builder(VanicrossActivity.this)
+							.setTitle("Congratulations.\nPlease enter your name.")
+							.setView(mEditScoreName)
+							.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// TODO Auto-generated method stub
+										if (mEditScoreName.getText().toString().equals("")) {
+											Toast.makeText(VanicrossActivity.this,
+												"Please enter a name.",
+												Toast.LENGTH_SHORT
+											).show();
+										}
+										String name = mEditScoreName.getText().toString();
+										boolean isScoreRecorded = recordScore(new ScoreRecord(name, mScore));
+										Toast.makeText(VanicrossActivity.this,
+											(isScoreRecorded ? "Scored." : "Not scored."),
+											Toast.LENGTH_LONG
+										).show();
+										mShowMenuAfter = true;
+										showScoreBulletin();
+										mShowMenuAfter = false;
+									}
+								
+								}
+							)
+							//.setNegativeButton("Cancel", null)
+							.create();
+						dlg.show();
+					}
 				}
 				return;
 			}
@@ -447,6 +460,15 @@ public class VanicrossActivity extends Activity {
     	return (int)(dp * mDisplayMetrics.density);
     }
     
+    public boolean couldBeInBulletin(int score) {
+    	int i;
+    	for (i = 0; i < mScores.size(); i++) {
+    		if (score > mScores.get(i).mScore) break;
+    	}
+    	if (i == 0) return true;
+    	return (i < mScores.size());
+    }
+    
     public boolean recordScore(ScoreRecord score) {
     	int i, tops = 10;
     	for (i = 0; i < mScores.size(); i++) {
@@ -462,6 +484,9 @@ public class VanicrossActivity extends Activity {
     		for (i = tops; i < mScores.size(); i++) {
     			mScores.remove(tops);
     		}
+    	}
+    	if (mScores.indexOf(score) == -1) {
+    		return false;
     	}
         try {
         	ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -499,5 +524,40 @@ public class VanicrossActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+    
+    /*
+     * show Score Bulletin Dialog
+     */
+    public void showScoreBulletin() {
+    	readScores();
+		AlertDialog dlg = new AlertDialog.Builder(VanicrossActivity.this)
+			.setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						if (mShowMenuAfter) {
+							if (mMenuDialog != null) {
+								mMenuDialog.show();
+							}
+						}
+					}
+				
+				}
+			)
+			.create();
+		dlg.setTitle("Score bulletin");
+		String msg = mScores.size() == 0 ? "Get your scores here!" : "";
+		for (int i = 0; i < mScores.size(); i++) {
+			ScoreRecord sr = mScores.get(i);
+			msg += sr.mName + ": \t" + sr.mScore;
+			if (i != mScores.size() - 1) {
+				msg += "\n";
+			}
+		}
+		dlg.setMessage(msg);
+		dlg.show();
     }
 }
