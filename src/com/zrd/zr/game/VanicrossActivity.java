@@ -215,7 +215,7 @@ public class VanicrossActivity extends Activity {
 					ImageAdapter ia = (ImageAdapter) mGridCross.getAdapter();
 					ImageView iv = (ImageView) mGridCross.getChildAt(vanBlks.get(i));
 					iv.setImageResource(R.drawable.pineapple);
-					fadeinAnim.setDuration(900);
+					fadeinAnim.setDuration(390);
 					iv.startAnimation(fadeinAnim);
 					(ia).setThumbIdAt(vanBlks.get(i), R.drawable.pineapple);
 				}
@@ -448,7 +448,7 @@ public class VanicrossActivity extends Activity {
     }
     
     public boolean recordScore(ScoreRecord score) {
-    	int i, tops = 3;
+    	int i, tops = 10;
     	for (i = 0; i < mScores.size(); i++) {
     		if (mScores.get(i).mScore < score.mScore) {
     			mScores.add(i, score);
