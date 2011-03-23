@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.method.SingleLineTransformationMethod;
 import android.util.DisplayMetrics;
@@ -62,6 +63,7 @@ public class VanicrossActivity extends Activity {
         mGridCross.setAdapter(new ImageAdapter(this));
         mEditScoreName = new EditText(this);
         mEditScoreName.setTransformationMethod(SingleLineTransformationMethod.getInstance());
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         readScores();
         CharSequence[] items = {
 			"Refresh...",
