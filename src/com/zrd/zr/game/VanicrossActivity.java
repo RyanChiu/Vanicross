@@ -23,10 +23,12 @@ import android.text.method.SingleLineTransformationMethod;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -37,7 +39,9 @@ import android.widget.Toast;
 public class VanicrossActivity extends Activity {
 	static DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 	static LinearLayout mLayoutTop;
+	TextView mTextScoreLabel;
 	TextView mTextScore;
+	Button mBtnRefresh;
 	GridView mGridCross;
 	AlertDialog mMenuDialog;
 	AlertDialog mTipsDialog;
@@ -65,6 +69,8 @@ public class VanicrossActivity extends Activity {
         mPreferences = getPreferences(Context.MODE_PRIVATE);
         getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
         mLayoutTop = (LinearLayout) findViewById(R.id.linearLayoutTop);
+        mBtnRefresh = (Button) findViewById(R.id.btnRefresh);
+        mTextScoreLabel = (TextView) findViewById(R.id.tvScoreLabel);
         mTextScore = (TextView) findViewById(R.id.tvScore);
         mGridCross = (GridView) findViewById(R.id.gridViewCross);
         mGridCross.setNumColumns(VanicrossActivity.getNumColumns());
@@ -293,6 +299,40 @@ public class VanicrossActivity extends Activity {
 				// TODO Auto-generated method stub
 				mMenuDialog.show();
 				return true;
+			}
+        	
+        });
+        
+        mBtnRefresh.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				ImageAdapter ia = ((ImageAdapter) mGridCross.getAdapter());
+				ia.renewThumbIds();
+				mGridCross.setAdapter(ia);
+				mScore = 0;
+				mTextScore.setText("" + mScore);
+			}
+        	
+        });
+        
+        mTextScoreLabel.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				showScoreBulletin();
+			}
+        	
+        });
+        
+        mTextScore.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				showScoreBulletin();
 			}
         	
         });

@@ -4,11 +4,14 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/bg_gray">
-    <LinearLayout android:layout_width="fill_parent" android:id="@+id/linearLayoutTop" android:layout_height="32dp" android:background="#66000000">
+    <LinearLayout android:layout_width="fill_parent" android:id="@+id/linearLayoutTop" android:background="#66000000" android:layout_height="36dp">
         <RelativeLayout android:id="@+id/relativeLayout1" android:layout_width="fill_parent" android:layout_height="fill_parent">
             <LinearLayout android:id="@+id/linearLayout1" android:layout_width="wrap_content" android:layout_alignParentRight="true" android:layout_height="fill_parent" android:gravity="center" android:paddingRight="3dp">
-                <TextView android:layout_height="wrap_content" android:id="@+id/textView1" android:layout_width="wrap_content" android:text="Score: " android:textColor="#8cb7e7" android:textStyle="bold"></TextView>
+                <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Score: " android:textColor="#8cb7e7" android:textStyle="bold" android:id="@+id/tvScoreLabel"></TextView>
                 <TextView android:id="@+id/tvScore" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="#8cb7e7" android:textStyle="bold"></TextView>
+            </LinearLayout>
+            <LinearLayout android:id="@+id/linearLayout2" android:layout_height="fill_parent" android:layout_width="wrap_content" android:gravity="center">
+                <Button android:layout_height="fill_parent" android:layout_width="wrap_content" android:id="@+id/btnRefresh" android:text="Refresh" android:textColor="#ffffff" android:gravity="center" android:textSize="16sp" android:paddingBottom="4dp" android:paddingTop="4dp" android:background="@drawable/refresh"></Button>
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
