@@ -42,6 +42,7 @@ public class VanicrossActivity extends Activity {
 	AlertDialog mMenuDialog;
 	AlertDialog mTipsDialog;
 	AlertDialog mQuitDialog;
+	AlertDialog mScoreNameDialog;
 	AlphaAnimation fadeinAnim = new AlphaAnimation(0.1f, 1.0f);
 	AlphaAnimation fadeoutAnim = new AlphaAnimation(1.0f, 0.1f);
 	private SharedPreferences mPreferences = null;
@@ -178,6 +179,38 @@ public class VanicrossActivity extends Activity {
         	}
         );
         
+        mScoreNameDialog = new AlertDialog.Builder(this)
+		.setTitle("Congratulations.\nPlease enter your name.")
+		.setView(mEditScoreName)
+		.setPositiveButton("OK",
+			new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog,
+						int which) {
+					// TODO Auto-generated method stub
+					if (mEditScoreName.getText().toString().equals("")) {
+						Toast.makeText(VanicrossActivity.this,
+							"Please enter a name.",
+							Toast.LENGTH_SHORT
+						).show();
+					}
+					String name = mEditScoreName.getText().toString();
+					boolean isScoreRecorded = recordScore(new ScoreRecord(name, mScore));
+					Toast.makeText(VanicrossActivity.this,
+						(isScoreRecorded ? "Scored." : "Not scored."),
+						Toast.LENGTH_LONG
+					).show();
+					mShowMenuAfter = true;
+					showScoreBulletin();
+					mShowMenuAfter = false;
+				}
+			
+			}
+		)
+		//.setNegativeButton("Cancel", null)
+		.create();
+        
         mGridCross.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -245,38 +278,7 @@ public class VanicrossActivity extends Activity {
 						/*
 						 * popup a dalog to let client input his/her name
 						 */
-						AlertDialog dlg = new AlertDialog.Builder(VanicrossActivity.this)
-							.setTitle("Congratulations.\nPlease enter your name.")
-							.setView(mEditScoreName)
-							.setPositiveButton("OK",
-								new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										// TODO Auto-generated method stub
-										if (mEditScoreName.getText().toString().equals("")) {
-											Toast.makeText(VanicrossActivity.this,
-												"Please enter a name.",
-												Toast.LENGTH_SHORT
-											).show();
-										}
-										String name = mEditScoreName.getText().toString();
-										boolean isScoreRecorded = recordScore(new ScoreRecord(name, mScore));
-										Toast.makeText(VanicrossActivity.this,
-											(isScoreRecorded ? "Scored." : "Not scored."),
-											Toast.LENGTH_LONG
-										).show();
-										mShowMenuAfter = true;
-										showScoreBulletin();
-										mShowMenuAfter = false;
-									}
-								
-								}
-							)
-							//.setNegativeButton("Cancel", null)
-							.create();
-						dlg.show();
+						mScoreNameDialog.show();
 					}
 				}
 				return;
