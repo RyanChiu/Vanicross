@@ -11,7 +11,7 @@
                 <TextView android:id="@+id/tvScore" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="#8cb7e7" android:textStyle="bold"></TextView>
             </LinearLayout>
             <LinearLayout android:id="@+id/linearLayout2" android:layout_height="fill_parent" android:layout_width="wrap_content" android:gravity="center">
-                <Button android:layout_height="fill_parent" android:layout_width="wrap_content" android:id="@+id/btnRefresh" android:text="Refresh" android:textColor="#ffffff" android:gravity="center" android:textSize="16sp" android:paddingBottom="4dp" android:paddingTop="4dp" android:background="@drawable/refresh"></Button>
+                <Button android:layout_height="fill_parent" android:id="@+id/btnRefresh" android:text="Refresh" android:textColor="#ffffff" android:gravity="center" android:textSize="16sp" android:paddingBottom="4dp" android:paddingTop="4dp" android:background="@drawable/refresh" android:layout_width="100dp"></Button>
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

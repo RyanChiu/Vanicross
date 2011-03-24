@@ -186,7 +186,8 @@ public class VanicrossActivity extends Activity {
         );
         
         mScoreNameDialog = new AlertDialog.Builder(this)
-		.setTitle("Congratulations.\nPlease enter your name.")
+		.setTitle("Congratulations.")
+		.setMessage("Your final score could get into Top 10.\nPlease enter your name.")
 		.setView(mEditScoreName)
 		.setPositiveButton("OK",
 			new DialogInterface.OnClickListener() {
@@ -276,15 +277,28 @@ public class VanicrossActivity extends Activity {
 					).show();
 					*/
 				} else {
-					Toast.makeText(VanicrossActivity.this,
-						"oooops...\nNo more blocks could be vanished.",
-						Toast.LENGTH_LONG
-					).show();
+					AlertDialog dlg;
 					if (couldBeInBulletin(mScore)) {
 						/*
 						 * popup a dalog to let client input his/her name
 						 */
 						mScoreNameDialog.show();
+					} else {
+						dlg = new AlertDialog.Builder(VanicrossActivity.this)
+							.setTitle("Tips")
+							.setMessage("No more blocks could be vanished.\nAnd your final score could not get in top 10.\nTry it again!")
+							.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									showScoreBulletin();
+								}
+								
+							})
+							.create();
+						dlg.show();
 					}
 				}
 				return;
