@@ -7,14 +7,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.commons.codec.binary.Base64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.text.method.SingleLineTransformationMethod;
 import android.util.DisplayMetrics;
@@ -46,15 +49,19 @@ public class VanicrossActivity extends Activity {
 	private final String mCfgScoresBulletin = "ScoreBulletin";
 	ArrayList<ScoreRecord> mScores = new ArrayList<ScoreRecord>();
 	int mScore = 0;
+	private final int mTops = 10;
 	EditText mEditScoreName = null;
 	private boolean mShowMenuAfter = false;
+	private AudioManager mAudioManager;
+	private SoundPool mSoundPool;
+	private HashMap<Integer, Integer> mSoundMap = new HashMap<Integer, Integer>();
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        mPreferences = getPreferences(VanicrossActivity.MODE_PRIVATE);
+        mPreferences = getPreferences(Context.MODE_PRIVATE);
         getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
         mLayoutTop = (LinearLayout) findViewById(R.id.linearLayoutTop);
         mTextScore = (TextView) findViewById(R.id.tvScore);
@@ -63,6 +70,12 @@ public class VanicrossActivity extends Activity {
         mGridCross.setAdapter(new ImageAdapter(this));
         mEditScoreName = new EditText(this);
         mEditScoreName.setTransformationMethod(SingleLineTransformationMethod.getInstance());
+        mAudioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
+        mSoundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 100);
+        mSoundMap.put(R.raw.error, mSoundPool.load(this, R.raw.error, 0));
+        mSoundMap.put(R.raw.vanished2, mSoundPool.load(this, R.raw.vanished2, 0));
+        mSoundMap.put(R.raw.vanished3, mSoundPool.load(this, R.raw.vanished3, 0));
+        mSoundMap.put(R.raw.vanished4, mSoundPool.load(this, R.raw.vanished4, 0));
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         readScores();
         CharSequence[] items = {
@@ -183,6 +196,7 @@ public class VanicrossActivity extends Activity {
 				*/
 				
 				if (vanBlks.size() == 0) {//no blocks should be vanished
+					playSound(R.raw.error);
 					Toast.makeText(VanicrossActivity.this,
 						"oooops...\nNo same color blocks at the corss.",
 						Toast.LENGTH_SHORT
@@ -192,7 +206,8 @@ public class VanicrossActivity extends Activity {
 				/*
 				 * vanish the blocks
 				 */
-				for (int i = 0; i < vanBlks.size(); i++) {
+				int i;
+				for (i = 0; i < vanBlks.size(); i++) {
 					ImageAdapter ia = (ImageAdapter) mGridCross.getAdapter();
 					ImageView iv = (ImageView) mGridCross.getChildAt(vanBlks.get(i));
 					iv.setImageResource(R.drawable.pineapple);
@@ -200,8 +215,11 @@ public class VanicrossActivity extends Activity {
 					iv.startAnimation(fadeinAnim);
 					(ia).setThumbIdAt(vanBlks.get(i), R.drawable.pineapple);
 				}
+				if (i == 2) playSound(R.raw.vanished3);
+				if (i == 3) playSound(R.raw.vanished2);
+				if (i == 4) playSound(R.raw.vanished4);
 				/*
-				 * show scores
+				 * show scores' change
 				 */
 				mTextScore.setText("" + mScore);
 				/*
@@ -468,11 +486,11 @@ public class VanicrossActivity extends Activity {
     		if (score > mScores.get(i).mScore) break;
     	}
     	if (i == 0) return true;
-    	return (i < mScores.size());
+    	return (i < mTops);
     }
     
     public boolean recordScore(ScoreRecord score) {
-    	int i, tops = 10;
+    	int i, mTops = 10;
     	for (i = 0; i < mScores.size(); i++) {
     		if (mScores.get(i).mScore < score.mScore) {
     			mScores.add(i, score);
@@ -482,9 +500,9 @@ public class VanicrossActivity extends Activity {
     	if (i == mScores.size()) {
     		mScores.add(mScores.size(), score);
     	}
-    	if (mScores.size() > tops) {
-    		for (i = tops; i < mScores.size(); i++) {
-    			mScores.remove(tops);
+    	if (mScores.size() > mTops) {
+    		for (i = mTops; i < mScores.size(); i++) {
+    			mScores.remove(mTops);
     		}
     	}
     	if (mScores.indexOf(score) == -1) {
@@ -561,5 +579,17 @@ public class VanicrossActivity extends Activity {
 		}
 		dlg.setMessage(msg);
 		dlg.show();
+    }
+    
+    /*
+     * try to play sound here
+     */
+    public void playSound(int soundId) {
+    	mSoundPool.play(
+    		mSoundMap.get(soundId),
+    		mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC),
+    		mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC),
+    		1, 0, 0.6f
+    	);
     }
 }
