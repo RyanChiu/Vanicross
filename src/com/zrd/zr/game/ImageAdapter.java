@@ -31,7 +31,7 @@ public class ImageAdapter extends BaseAdapter {
 		int idx = 0;
 		Random random = new Random((int) (Math.random() * 100));
 		int m = Math.abs(random.nextInt());
-		int l = changeThumbIds(-1);
+		int l = changeThumbIds(-1).length;
 		idx = m % l;
 		return idx;
 	}
@@ -60,7 +60,7 @@ public class ImageAdapter extends BaseAdapter {
 		}
 	}
 	
-	public int changeThumbIds(int idx) {
+	public Integer[][] changeThumbIds(int idx) {
 		Integer colors[][] = {
 			{
 				R.drawable.ball_black, R.drawable.ball_blue, R.drawable.ball_green, R.drawable.ball_purple,
@@ -90,14 +90,14 @@ public class ImageAdapter extends BaseAdapter {
 		};
 		if (idx < 0) {
 			idx = mColorsCurIndex;
-			return colors.length;
+			return colors;
 		} else {
 			idx = idx % colors.length;
 		}
 		mColors = colors[idx];
 		mColorsCurIndex = idx;
 		renewThumbIds();
-		return colors.length;
+		return colors;
 	}
 
 	@Override

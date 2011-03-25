@@ -10,8 +10,10 @@
                 <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Score: " android:textColor="#8cb7e7" android:textStyle="bold" android:id="@+id/tvScoreLabel"></TextView>
                 <TextView android:id="@+id/tvScore" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="#8cb7e7" android:textStyle="bold"></TextView>
             </LinearLayout>
-            <LinearLayout android:id="@+id/linearLayout2" android:layout_height="fill_parent" android:layout_width="wrap_content" android:gravity="center">
-                <Button android:layout_height="fill_parent" android:id="@+id/btnRefresh" android:text="Refresh" android:textColor="#ffffff" android:gravity="center" android:textSize="16sp" android:paddingBottom="4dp" android:paddingTop="4dp" android:background="@drawable/refresh" android:layout_width="100dp"></Button>
+            <LinearLayout android:id="@+id/linearLayout2" android:layout_height="fill_parent" android:layout_width="wrap_content" android:gravity="center" android:layout_centerVertical="true">
+                <Button android:textColor="#ffffff" android:layout_width="wrap_content" android:layout_height="fill_parent" android:id="@+id/btnRefresh" android:layout_marginLeft="1dp" android:layout_marginTop="2dp" android:layout_marginBottom="2dp" android:text="Refresh" android:background="@drawable/darkbutton"></Button>
+                <Button android:layout_width="wrap_content" android:id="@+id/btnTheme" android:text="Theme" android:textColor="#ffffff" android:layout_marginLeft="1dp" android:background="@drawable/darkbutton" android:layout_height="fill_parent" android:layout_marginBottom="2dp" android:layout_marginTop="2dp"></Button>
+                <ImageButton android:scaleType="fitXY" android:background="#00000000" android:src="@drawable/light" android:layout_height="36dp" android:layout_width="36dp" android:id="@+id/btnTips"></ImageButton>
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

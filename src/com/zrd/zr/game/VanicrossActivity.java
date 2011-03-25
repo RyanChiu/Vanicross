@@ -8,6 +8,8 @@ import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -31,8 +33,11 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,11 +47,14 @@ public class VanicrossActivity extends Activity {
 	TextView mTextScoreLabel;
 	TextView mTextScore;
 	Button mBtnRefresh;
+	Button mBtnTheme;
+	ImageButton mBtnTips;
 	GridView mGridCross;
 	AlertDialog mMenuDialog;
 	AlertDialog mTipsDialog;
 	AlertDialog mQuitDialog;
 	AlertDialog mScoreNameDialog;
+	AlertDialog mThemeDialog;
 	AlphaAnimation fadeinAnim = new AlphaAnimation(0.1f, 1.0f);
 	AlphaAnimation fadeoutAnim = new AlphaAnimation(1.0f, 0.1f);
 	private SharedPreferences mPreferences = null;
@@ -70,6 +78,8 @@ public class VanicrossActivity extends Activity {
         getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
         mLayoutTop = (LinearLayout) findViewById(R.id.linearLayoutTop);
         mBtnRefresh = (Button) findViewById(R.id.btnRefresh);
+        mBtnTheme = (Button) findViewById(R.id.btnTheme);
+        mBtnTips = (ImageButton) findViewById(R.id.btnTips);
         mTextScoreLabel = (TextView) findViewById(R.id.tvScoreLabel);
         mTextScore = (TextView) findViewById(R.id.tvScore);
         mGridCross = (GridView) findViewById(R.id.gridViewCross);
@@ -218,6 +228,26 @@ public class VanicrossActivity extends Activity {
 		//.setNegativeButton("Cancel", null)
 		.create();
         
+        ListView lst = getThemeList(); 
+        mThemeDialog = new AlertDialog.Builder(VanicrossActivity.this)
+			.setTitle("Pick a theme")
+			.setView(lst)
+			.create();
+		lst.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				// TODO Auto-generated method stub
+				ImageAdapter ia = ((ImageAdapter) mGridCross.getAdapter());
+				ia.changeThumbIds(position);
+				mGridCross.setAdapter(ia);
+				mScore = 0;
+				mTextScore.setText("" + mScore);
+				mThemeDialog.dismiss();
+			}
+			
+		});
+        
         mGridCross.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -327,6 +357,40 @@ public class VanicrossActivity extends Activity {
 				mGridCross.setAdapter(ia);
 				mScore = 0;
 				mTextScore.setText("" + mScore);
+			}
+        	
+        });
+        
+        mBtnTheme.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				mThemeDialog.show();
+			}
+        	
+        });
+        
+        mBtnTips.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				ArrayList<Integer> vlst = getVanishableBlocks();
+				if (vlst.size() == 0) {
+					Toast.makeText(VanicrossActivity.this,
+						"No blocks could be vanished.",
+						Toast.LENGTH_LONG
+					).show();
+					return;
+				}
+				int i, j = vlst.size();
+				j = (j <= 3 ? j : 3);
+				for (i = 0; i < j; i++) {
+					ImageView iv = (ImageView) mGridCross.getChildAt(vlst.get(i));
+					fadeinAnim.setDuration(300);
+					iv.startAnimation(fadeinAnim);
+				}
 			}
         	
         });
@@ -647,5 +711,37 @@ public class VanicrossActivity extends Activity {
     		mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC),
     		1, 0, 0.6f
     	);
+    }
+    
+    private List<Map<String, Object>> getThemeData() {
+    	List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+    	Map<String, Object> map;
+    	ImageAdapter ia = ((ImageAdapter) mGridCross.getAdapter());
+    	Integer[][] colors = ia.changeThumbIds(-1);
+    	for (int i = 0; i < colors.length; i++) {
+    		map = new HashMap<String, Object>();
+    		map.put("imgTheme", colors[i][0]);
+    		map.put("imgThemeSmall0", colors[i][1]);
+    		map.put("imgThemeSmall1", colors[i][2]);
+    		map.put("imgThemeSmall2", colors[i][3]);
+    		map.put("imgThemeSmall3", colors[i][4]);
+    		map.put("imgThemeSmall4", colors[i][5]);
+    		list.add(map);
+    	}
+    	
+    	return list;
+    }
+    
+    private ListView getThemeList() {
+    	SimpleAdapter sa = new SimpleAdapter(
+    		this,
+    		getThemeData(),
+    		R.layout.themeitem,
+    		new String[] {"imgTheme", "imgThemeSmall0", "imgThemeSmall1", "imgThemeSmall2", "imgThemeSmall3", "imgThemeSmall4"},
+    		new int[] {R.id.imgTheme, R.id.imgThemeSmall0, R.id.imgThemeSmall1, R.id.imgThemeSmall2, R.id.imgThemeSmall3, R.id.imgThemeSmall4}
+    	);
+    	ListView lst = new ListView(this);
+    	lst.setAdapter(sa);
+    	return lst;
     }
 }
