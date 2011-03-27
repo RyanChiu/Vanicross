@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -62,6 +63,7 @@ public class VanicrossActivity extends Activity {
 	private final String mCfgScoresBulletin = "ScoreBulletin";
 	ArrayList<ScoreRecord> mScores = new ArrayList<ScoreRecord>();
 	int mScore = 0;
+	int mVanLevel = 1;
 	private final int mTops = 10;
 	EditText mEditScoreName = null;
 	private boolean mShowMenuAfter = false;
@@ -125,7 +127,7 @@ public class VanicrossActivity extends Activity {
 							mTextScore.setText("" + mScore);
 							break;
 						case 2:
-							ia.changeThumbIds(ia.getRandomColorIndex());
+							ia.changeThumbIds(ia.getRandomColorsIndex());
 							mGridCross.setAdapter(ia);
 							mScore = 0;
 							mTextScore.setText("" + mScore);
@@ -277,13 +279,13 @@ public class VanicrossActivity extends Activity {
 				 * vanish the blocks
 				 */
 				int i;
+				ImageAdapter ia = (ImageAdapter) mGridCross.getAdapter();
 				for (i = 0; i < vanBlks.size(); i++) {
-					ImageAdapter ia = (ImageAdapter) mGridCross.getAdapter();
 					ImageView iv = (ImageView) mGridCross.getChildAt(vanBlks.get(i));
 					iv.setImageResource(R.drawable.pineapple);
 					fadeinAnim.setDuration(100);
 					iv.startAnimation(fadeinAnim);
-					(ia).setThumbIdAt(vanBlks.get(i), R.drawable.pineapple);
+					ia.setThumbIdAt(vanBlks.get(i), R.drawable.pineapple);
 				}
 				if (i == 2) playSound(R.raw.vanished3);
 				if (i == 3) playSound(R.raw.vanished2);
@@ -292,6 +294,19 @@ public class VanicrossActivity extends Activity {
 				 * show scores' change
 				 */
 				mTextScore.setText("" + mScore);
+				/*
+				 * see if it should be randomly add numbers (numbers between 0 to 2) of blocks
+				 */
+				ArrayList<Integer> alBlankBlocks = getBlankBlocks(mVanLevel);
+				ArrayList<Integer> alRanColors = ia.getRandomCurColors(mVanLevel);
+				for (i = 0; i < alBlankBlocks.size() && alBlankBlocks.size() == alRanColors.size(); i++) {
+					ImageView iv = (ImageView) mGridCross.getChildAt(alBlankBlocks.get(i));
+					iv.setImageResource(alRanColors.get(i));
+					fadeinAnim.setDuration(100);
+					iv.startAnimation(fadeinAnim);
+					ia.setThumbIdAt(alBlankBlocks.get(i), alRanColors.get(i));
+				}
+				
 				/*
 				 * check if any blocks could be vanished
 				 */
@@ -562,6 +577,32 @@ public class VanicrossActivity extends Activity {
     		}
     	}
     	return blks;
+    }
+    
+    /*
+     * when num <= 0, it returns all the positions of blank blocks
+     * when num > 0, it returns "num" blocks' postionss that randomly picked
+     */
+    private ArrayList<Integer> getBlankBlocks(int num) {
+    	ArrayList<Integer> blks = new ArrayList<Integer>();
+    	ArrayList<Integer> lst = ((ImageAdapter) mGridCross.getAdapter()).getThumbIds();
+    	for (int i = 0; i < lst.size(); i++) {
+    		if (lst.get(i) == R.drawable.pineapple) {
+    			blks.add(i);
+    		}
+    	}
+    	if (num <= 0 || blks.size() == 0) {
+    		return blks;
+    	} else {
+    		ArrayList<Integer> ranblks = new ArrayList<Integer>();
+    		Random random = new Random((int) (Math.random() * 100));
+    		for (int i = 0; i < num; i++) {
+    			int m = Math.abs(random.nextInt());
+    			int idx = m % blks.size();
+    			ranblks.add(blks.get(idx));
+    		}
+    		return ranblks;
+    	}
     }
     
     public int[] getXY(int position) {

@@ -19,7 +19,7 @@ public class ImageAdapter extends BaseAdapter {
 	
 	public ImageAdapter (Context c) {
 		this.mContext = c;
-		mColorsCurIndex = getRandomColorIndex();
+		mColorsCurIndex = getRandomColorsIndex();
 		changeThumbIds(mColorsCurIndex);
 	}
 
@@ -27,7 +27,7 @@ public class ImageAdapter extends BaseAdapter {
 		return mThumbIds;
 	}
 	
-	public int getRandomColorIndex() {
+	public int getRandomColorsIndex() {
 		int idx = 0;
 		Random random = new Random((int) (Math.random() * 100));
 		int m = Math.abs(random.nextInt());
@@ -35,6 +35,24 @@ public class ImageAdapter extends BaseAdapter {
 		idx = m % l;
 		return idx;
 	}
+	
+	public ArrayList<Integer> getRandomCurColors(int num) {
+    	ArrayList<Integer> colors = new ArrayList<Integer>();
+    	ArrayList<Integer> nopcolors = new ArrayList<Integer>();
+    	for (int i = 0; i < mColors.length; i++) {
+    		if (mColors[i] != R.drawable.pineapple) {
+    			nopcolors.add(mColors[i]);
+    		}
+    	}
+    	Random random = new Random((int) (Math.random() * 100));
+    	for (int i = 0; i < num && nopcolors.size() != 0; i++) {
+    		int m = Math.abs(random.nextInt());
+    		int idx = m % nopcolors.size();
+    		Integer color = nopcolors.get(idx);
+    		colors.add(color);
+    	}
+    	return colors;
+    }
 	
 	public int getColorsCurIndex() {
 		return mColorsCurIndex;
@@ -60,6 +78,9 @@ public class ImageAdapter extends BaseAdapter {
 		}
 	}
 	
+	/*
+	 * when idx < 0, it returns the colors it holds
+	 */
 	public Integer[][] changeThumbIds(int idx) {
 		Integer colors[][] = {
 			{
