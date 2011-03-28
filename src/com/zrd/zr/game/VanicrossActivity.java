@@ -47,6 +47,7 @@ public class VanicrossActivity extends Activity {
 	static LinearLayout mLayoutTop;
 	TextView mTextScoreLabel;
 	TextView mTextScore;
+	TextView mTextLevel;
 	Button mBtnRefresh;
 	Button mBtnTheme;
 	ImageButton mBtnTips;
@@ -63,7 +64,7 @@ public class VanicrossActivity extends Activity {
 	private final String mCfgScoresBulletin = "ScoreBulletin";
 	ArrayList<ScoreRecord> mScores = new ArrayList<ScoreRecord>();
 	int mScore = 0;
-	int mVanLevel = 1;
+	int mVanLevel = 0;
 	private final int mTops = 10;
 	EditText mEditScoreName = null;
 	private boolean mShowMenuAfter = false;
@@ -84,6 +85,7 @@ public class VanicrossActivity extends Activity {
         mBtnTips = (ImageButton) findViewById(R.id.btnTips);
         mTextScoreLabel = (TextView) findViewById(R.id.tvScoreLabel);
         mTextScore = (TextView) findViewById(R.id.tvScore);
+        mTextLevel = (TextView) findViewById(R.id.tvLevel);
         mGridCross = (GridView) findViewById(R.id.gridViewCross);
         mGridCross.setNumColumns(VanicrossActivity.getNumColumns());
         mGridCross.setAdapter(new ImageAdapter(this));
@@ -213,6 +215,7 @@ public class VanicrossActivity extends Activity {
 							"Please enter a name.",
 							Toast.LENGTH_SHORT
 						).show();
+						return;
 					}
 					String name = mEditScoreName.getText().toString();
 					boolean isScoreRecorded = recordScore(new ScoreRecord(name, mScore));
@@ -382,6 +385,28 @@ public class VanicrossActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				mThemeDialog.show();
+			}
+        	
+        });
+        
+        mTextLevel.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				int iMax = 2;
+				mVanLevel++;
+				if (mVanLevel >= (iMax + 1)) {
+					mVanLevel = 0;
+				}
+				String sLevel = "";
+				for (int i = 0; i < iMax - mVanLevel; i++) {
+					sLevel = "☆" + sLevel;
+				}
+				for (int i = iMax - mVanLevel; i < iMax; i++) {
+					sLevel = "★" + sLevel;
+				}
+				mTextLevel.setText(sLevel);
 			}
         	
         });
