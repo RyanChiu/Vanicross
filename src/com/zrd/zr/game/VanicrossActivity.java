@@ -65,6 +65,7 @@ public class VanicrossActivity extends Activity {
 	ArrayList<ScoreRecord> mScores = new ArrayList<ScoreRecord>();
 	int mScore = 0;
 	int mVanLevel = 0;
+	private boolean mLevelLocked = false;
 	private final int mTops = 10;
 	EditText mEditScoreName = null;
 	private boolean mShowMenuAfter = false;
@@ -349,6 +350,7 @@ public class VanicrossActivity extends Activity {
 						dlg.show();
 					}
 				}
+				mLevelLocked = false;
 				return;
 			}
         });
@@ -375,6 +377,7 @@ public class VanicrossActivity extends Activity {
 				mGridCross.setAdapter(ia);
 				mScore = 0;
 				mTextScore.setText("" + mScore);
+				mLevelLocked = false;
 			}
         	
         });
@@ -395,18 +398,27 @@ public class VanicrossActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				int iMax = 2;
-				mVanLevel++;
-				if (mVanLevel >= (iMax + 1)) {
-					mVanLevel = 0;
+				if (!mLevelLocked) {
+					mVanLevel++;
+					if (mVanLevel >= (iMax + 1)) {
+						mVanLevel = 0;
+					}
+					String sLevel = "";
+					for (int i = 0; i < iMax - mVanLevel; i++) {
+						sLevel = "☆" + sLevel;
+					}
+					for (int i = iMax - mVanLevel; i < iMax; i++) {
+						sLevel = "★" + sLevel;
+					}
+					mTextLevel.setText(sLevel);
+					mLevelLocked = true;
+				} else {
+					Toast.makeText(
+						VanicrossActivity.this,
+						"You have to finish current one to change the level.\nOr, you could give up and refresh it to set the level you want.",
+						Toast.LENGTH_LONG
+					).show();
 				}
-				String sLevel = "";
-				for (int i = 0; i < iMax - mVanLevel; i++) {
-					sLevel = "☆" + sLevel;
-				}
-				for (int i = iMax - mVanLevel; i < iMax; i++) {
-					sLevel = "★" + sLevel;
-				}
-				mTextLevel.setText(sLevel);
 			}
         	
         });
