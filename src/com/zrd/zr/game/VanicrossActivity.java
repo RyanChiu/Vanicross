@@ -415,7 +415,8 @@ public class VanicrossActivity extends Activity {
 				} else {
 					Toast.makeText(
 						VanicrossActivity.this,
-						"You have to finish current one to change the level.\nOr, you could give up and refresh it to set the level you want.",
+						"You have to finish current one to set your level.\n"
+							+ "Or, you could give up and refresh it to set the level you want.",
 						Toast.LENGTH_LONG
 					).show();
 				}
