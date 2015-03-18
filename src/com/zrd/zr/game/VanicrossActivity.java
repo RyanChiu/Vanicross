@@ -513,7 +513,8 @@ public class VanicrossActivity extends Activity {
     	int[] xy;
     	int[] blks = new int[4];//0 left, 1 top, 2 right, 3 bottom
     	ArrayList<Integer> lst = ((ImageAdapter) mGridCross.getAdapter()).getThumbIds();
-    	int i, j;
+    	@SuppressWarnings("unused")
+		int i, j;
     	xy = getXY(position);
 		for (i = 0; (j = getPosition(xy)) >= 0; i++) {//check left
 			if (lst.get(j) != R.drawable.pineapple) {
