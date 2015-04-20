@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="/home/ray/myStudio/workspace.old/vanicross/vendors/commons-codec-1.4.jar"/>
-	<classpathentry kind="lib" path="/home/ray/myStudio/devTools/android-sdk-linux_r21_1/platforms/android-7/android.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
